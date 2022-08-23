@@ -126,6 +126,10 @@ Created on 21  2022
 множити
 Операції з integer і float
 
+реалізація скорочення дробів, в функції стр туфта, там
+О(значення мін(чисальник, знаменник)) пишу 2 функції:
+_gcd і str_2 які скорочують за ~O(1) підключати їх не буду, але щоб була
+правильна реалізація
 @author: dno
 '''
 import doctest
@@ -197,6 +201,15 @@ class Fraction:
                        " " + str(numerator) + " / " + str(denominator))
         return result
 
+    def str_2(self):
+        gcd = Fraction._gcd(self.numerator, self.denominator)
+        return Fraction(self.numerator // gcd, self.denominator // gcd)
+
+    def _gcd(first, second):
+        while second != 0:
+            first, second = second, first % second
+        return first
+
     def __eq__(self, other):
         numerator_1, denominator_1 = fraction_reduction(self.numerator, self.denominator)
         numerator_2, denominator_2 = fraction_reduction(other.numerator, other.denominator)
@@ -255,7 +268,9 @@ class Fraction:
             other = int(other)
         if type(other) == int:
             other = Fraction(other, 1)
-
+        print("\n__add self=", self, "with type", type(self), "other", other)
+        print("self.numerator", self.numerator, "self.denominator",
+              self.denominator)
         numerator_self = self.numerator * other.denominator
         numerator_other = other.numerator * self.denominator
         bouth_denominator = self.denominator * other.denominator
@@ -264,6 +279,15 @@ class Fraction:
         return result
 
     def __radd__(self, other):
+        """
+        !!!!!
+        self тут це другий операнд, тобто фракшн, значить я передаю в
+        функцію адд замість селфа азер(інт там є селфом), але воно правильно
+        рахує, я не розумію чому.
+        по суті тут має бути return Fraction.__add__(self, other)
+        тоді фракшн йде пеншою, а інт другим
+        """
+        print("\n__radd self=", self, "other", other)
         return Fraction.__add__(other, self)
 
     def __sub__(self, other):
@@ -281,6 +305,9 @@ class Fraction:
 
     def __rsub__(self, other):
         return Fraction.__add__(-other, self)
+
+    def __pow__(self, power):
+        return Fraction(self.numerator ** power, self.denominator ** power)
 
 
 
@@ -321,14 +348,14 @@ frac_minus_1_2 = Fraction(-1, 2)
 frac_1_3 = Fraction("1", "3")
 frac_1_4 = Fraction(1, 4)
 
-print(1, "+", frac_1_2, "= ", end="")
-print(1 + frac_1_2)
+# print(frac_1_2, "+", 1, "= ", end="")
+# print(frac_1_2 + 1)
 
-print(1, "+", frac_minus_1_2, "= ", end="")
-print(1 + frac_minus_1_2)
+print(2, "+", frac_1_2, "= ", end="")
+print(2 + frac_1_2)
 
-print(frac_minus_1_2, "-", 1.2, "= ", end="")
-print(frac_minus_1_2 - 1.2)
+# print(frac_minus_1_2, "-", 1.2, "= ", end="")
+# print(frac_minus_1_2 - 1.2)
 
 
 # print(abs(frac_1_2), abs(-frac_1_2), abs(frac_minus_1_2))
